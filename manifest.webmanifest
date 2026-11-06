@@ -1,0 +1,21 @@
+{
+  "name": "RECLAIM \u2014 Take Back Your Time",
+  "short_name": "RECLAIM",
+  "description": "A private, offline-friendly habit and focus companion.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#090909",
+  "theme_color": "#090909",
+  "icons": [
+    {
+      "src": "./assets/reclaim-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/reclaim-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

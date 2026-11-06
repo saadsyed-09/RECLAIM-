@@ -1,0 +1,17 @@
+{
+  "name": "reclaim-take-back-your-time",
+  "version": "0.9.0",
+  "private": true,
+  "description": "RECLAIM \u2014 Take Back Your Time",
+  "scripts": {
+    "build": "echo Static web app ready",
+    "android": "npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  }
+}

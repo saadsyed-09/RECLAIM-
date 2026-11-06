@@ -1,0 +1,15 @@
+{
+  "appId": "com.reclaim.app",
+  "appName": "RECLAIM",
+  "webDir": ".",
+  "android": {
+    "backgroundColor": "#090909"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1000,
+      "backgroundColor": "#090909",
+      "showSpinner": false
+    }
+  }
+}

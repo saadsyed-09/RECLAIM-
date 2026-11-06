@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090909">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./assets/reclaim-192.png">
+<title>RECLAIM — Take Back Your Time</title>
+<style>
+:root{--bg:#090909;--panel:#151515;--panel2:#1d1d1d;--line:#292929;--muted:#929292;--white:#f5f5f5;--red:#e53935;--green:#9bd6a8;--radius:22px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;letter-spacing:-.02em}
+button{font:inherit;color:inherit;border:0;cursor:pointer}button:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+.app{max-width:520px;margin:auto;min-height:100dvh;padding:env(safe-area-inset-top) 17px calc(100px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 2px 20px}
+.brand{font-size:13px;letter-spacing:.22em;font-weight:800}.brand span{color:var(--red)}.eyebrow{color:var(--muted);font-size:10px;letter-spacing:.18em;font-weight:700}
+.icon-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:transparent;font-size:17px}
+h1{font-size:36px;line-height:1.02;margin:8px 0 5px;letter-spacing:-.065em}h2{font-size:19px;margin:0;letter-spacing:-.04em}p{color:var(--muted);line-height:1.5;margin:0}
+.hero{padding:21px;border:1px solid #303030;border-radius:27px;background:radial-gradient(ellipse at 90% 0%,#292020 0%,#171515 35%,#141414 72%);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:190px;height:190px;border:1px solid #ffffff0d;border-radius:50%;right:-80px;top:-85px;box-shadow:0 0 0 22px #ffffff06,0 0 0 45px #ffffff04}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
+.streak{font-size:42px;font-weight:800;letter-spacing:-.07em;margin-top:8px}.streak small{font-size:15px;color:var(--muted);letter-spacing:0}
+.level{background:#292929;border:1px solid #383838;border-radius:15px;padding:10px 12px;text-align:right;font-size:11px;color:var(--muted)}
+.level b{display:block;color:white;font-size:18px;margin-top:3px}
+.progress-track{height:7px;border-radius:20px;background:#343434;margin:19px 0 8px;overflow:hidden}.progress-fill{height:100%;width:0;background:var(--white);border-radius:20px;transition:width .35s}
+.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
+.section{margin-top:27px}.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.text-btn{background:none;color:#bbb;font-size:12px;padding:5px}
+.mission-list{display:grid;gap:9px}.mission{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:14px}
+.check{width:23px;height:23px;border:1px solid #555;border-radius:8px;background:transparent;display:grid;place-items:center;flex:none}
+.mission.done .check{background:var(--green);border-color:var(--green);color:#101010}.mission.done .mission-title{text-decoration:line-through;color:#777}
+.mission-copy{flex:1;min-width:0}.mission-title{font-size:13px;font-weight:650}.mission-sub{font-size:11px;color:var(--muted);margin-top:4px}.xp{font-size:11px;color:#aaa;white-space:nowrap}
+.quick-card{display:flex;align-items:center;gap:14px;padding:17px;border-radius:20px;background:#e7e7e7;color:#111}
+.quick-symbol{width:43px;height:43px;border-radius:14px;background:#d3d3d3;display:grid;place-items:center;font-size:22px}
+.quick-card p{color:#555;font-size:11px;margin-top:4px}.quick-card button{margin-left:auto;background:#111;color:#fff;border-radius:99px;padding:10px 13px;font-size:11px;font-weight:700;white-space:nowrap}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}.stat strong{font-size:25px;display:block;margin-top:7px}.stat span{font-size:10px;color:var(--muted);letter-spacing:.1em}
+nav{position:fixed;z-index:5;bottom:calc(12px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:auto;max-width:calc(100% - 32px);display:flex;align-items:center;justify-content:center;gap:4px;background:#202020ed;border:1px solid #393939;border-radius:999px;padding:6px;backdrop-filter:blur(18px);box-shadow:0 10px 40px #0009}
+nav button{background:transparent;border-radius:999px;min-width:52px;padding:10px 12px;color:#888;font-size:9px;display:grid;gap:4px;justify-items:center;align-content:center;transition:background .2s,color .2s}
+nav button .nav-icon{font-size:17px;line-height:1}nav button.active{background:#353535;color:white}
+.page{display:none}.page.active{display:block}.page-intro{margin:8px 0 22px}.page-intro p{font-size:13px;margin-top:7px}
+.tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tile{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:16px;text-align:left;min-height:122px}.tile .tile-icon{font-size:23px}.tile b{display:block;font-size:13px;margin-top:17px}.tile small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:17px;margin-top:12px}
+.primary{background:var(--white);color:#111;border-radius:99px;padding:13px 17px;font-size:12px;font-weight:800}.secondary{background:#292929;border:1px solid #3a3a3a;border-radius:99px;padding:12px 16px;font-size:12px}
+.game-area{text-align:center;padding:25px 10px}.game-area h2{font-size:22px}.game-area p{font-size:12px;margin:8px 0 20px}
+.game-pad{width:100%;min-height:180px;border-radius:22px;background:#202020;border:1px solid #383838;display:grid;place-items:center;font-size:32px;font-weight:800;margin:16px 0}
+.game-pad.target{background:#254b32}.game-pad .sub{font-size:12px;color:#aaa;font-weight:500}
+.breath-orb{width:120px;height:120px;border-radius:50%;margin:20px auto;background:radial-gradient(circle at 35% 30%,#fff,#999 48%,#555);box-shadow:0 0 45px #fff3;animation:breathe 8s ease-in-out infinite alternate}
+@keyframes breathe{from{transform:scale(.72);opacity:.65}to{transform:scale(1.08);opacity:1}}
+.world-scene{height:220px;border-radius:20px;background:radial-gradient(ellipse at 50% 90%,#354438,#17231d 48%,#111 75%);display:grid;place-items:center;font-size:70px;position:relative;overflow:hidden}
+.world-scene:before,.world-scene:after{content:"";position:absolute;border:1px solid #ffffff16;border-radius:50%;width:240px;height:80px;bottom:15px}.world-scene:after{width:320px;height:110px;bottom:-4px}
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.badge-item{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px 7px;text-align:center}.badge-item .medal{font-size:24px}.badge-item small{display:block;color:var(--muted);font-size:9px;margin-top:7px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}.day{aspect-ratio:1;border-radius:9px;background:#242424;display:grid;place-items:center;font-size:10px;color:#888}.day.today{outline:1px solid white;color:white}.day.done{background:#31543a;color:#d9f5df}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.muted{color:var(--muted)}.small{font-size:11px}
+input{width:100%;background:#202020;color:white;border:1px solid #383838;border-radius:12px;padding:12px;font:inherit}
+.toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,15px);background:#eee;color:#111;padding:11px 16px;border-radius:99px;font-size:12px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:10;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{font-size:10px;color:#666;text-align:center;margin-top:28px;line-height:1.5}
+@media(min-width:600px){body{background:#050505}.app{padding-top:20px}}
+
+.onboarding{position:fixed;inset:0;z-index:20;background:#090909;display:none;align-items:center;justify-content:center;padding:24px}
+.onboarding.show{display:flex}.onboard-inner{width:min(440px,100%)}.onboard-mark{font-size:12px;letter-spacing:.22em;font-weight:800}.onboard-mark span{color:var(--red)}
+.onboard-art{height:180px;border:1px solid #292929;border-radius:25px;margin:26px 0;background:radial-gradient(circle at 50% 50%,#3a1717,#151515 60%);display:grid;place-items:center;position:relative;overflow:hidden}
+.onboard-art:before{content:"";width:105px;height:105px;border:1px solid #ffffff70;border-radius:50%;box-shadow:0 0 0 18px #ffffff0b,0 0 0 38px #ffffff07}
+.onboard-art:after{content:"✳";position:absolute;font-size:26px;color:#fff}
+.onboard-dots{display:flex;gap:6px;margin:18px 0}.onboard-dots i{width:18px;height:4px;border-radius:4px;background:#444}.onboard-dots i.active{background:#fff;width:28px}
+
+
+.check{cursor:pointer;touch-action:manipulation}
+.check:focus-visible,.tile:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+.game-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.game-actions button{border:1px solid var(--line);background:#222;color:var(--white);padding:12px 16px;border-radius:14px}
+.game-big{font-size:32px;font-weight:800;letter-spacing:2px;margin:18px 0}
+.game-input{width:100%;padding:14px;border-radius:12px;border:1px solid var(--line);background:#101010;color:#fff;font-size:18px}
+
+.modal-overlay{position:fixed;inset:0;z-index:50;background:#000c;display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(8px)}
+.modal-overlay.show{display:flex}.modal-card{width:min(440px,100%);max-height:85vh;overflow:auto;background:#151515;border:1px solid #393939;border-radius:24px;padding:22px;animation:modalIn .25s ease}
+@keyframes modalIn{from{transform:translateY(16px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.detective{font-size:64px;text-align:center;animation:detectivePulse 1.2s ease-in-out infinite alternate}
+@keyframes detectivePulse{to{transform:scale(1.08);filter:drop-shadow(0 0 18px #e5393577)}}
+.case-stamp{border:3px solid #e53935;color:#e53935;font-weight:900;letter-spacing:.1em;text-align:center;padding:12px;transform:rotate(-4deg);animation:stamp .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes stamp{from{transform:scale(2) rotate(-12deg);opacity:0}to{transform:scale(1) rotate(-4deg);opacity:1}}
+.game-card{min-height:118px}.game-card small{line-height:1.4}.tutorial-list{padding-left:18px;color:#ccc;font-size:13px;line-height:1.7}
+
+.rank-section{margin:22px 0}.rank-scroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 2px 16px;scrollbar-width:thin}
+.rank-card{flex:0 0 78%;max-width:320px;scroll-snap-align:start;border:1px solid #333;border-radius:20px;background:linear-gradient(145deg,#191919,#0d0d0d);padding:17px;text-align:left;color:#f5f5f5;position:relative;overflow:hidden}
+.rank-card.current{border-color:#d7b65d;box-shadow:0 0 20px #d7b65d22}.rank-card.locked{opacity:.62}
+.rank-card .rank-num{font-size:10px;letter-spacing:.16em;color:#888}.rank-card h3{font-size:22px;margin:8px 0}.rank-card .rank-min{font-size:12px;color:#aaa}
+.rank-card .rank-gem{position:absolute;right:15px;top:14px;font-size:25px;color:#d7b65d}
+.rank-progress{height:7px;background:#303030;border-radius:20px;position:relative;overflow:visible;margin:13px 0 8px}
+.rank-progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#8e7435,#f4d47b)}
+.rank-progress-marker{position:absolute;top:50%;width:4px;height:15px;background:#ffe59a;transform:translate(-50%,-50%);border-radius:4px;box-shadow:0 0 10px 3px #ffd76a}
+.rank-xp-meta{display:flex;justify-content:space-between;font-size:10px;color:#aaa;gap:8px}
+.rank-detail{border:1px solid #343434;border-radius:18px;padding:16px;background:#141414;margin-top:8px}
+.profile-top-btn{width:42px;height:42px;border-radius:50%;border:1px solid #333;background:#111;color:#eee;font-size:20px}
+
+/* ===== RECLAIM v0.9 · final visual polish ===== */
+:root{
+ --ease-out:cubic-bezier(.22,.8,.25,1);
+ --glass:rgba(25,25,25,.88);
+ --gold:#e7c56e;
+}
+html{scroll-behavior:smooth;scroll-padding-top:18px}
+body{
+ background:
+  radial-gradient(ellipse at 50% -18%,rgba(229,57,53,.075),transparent 42%),
+  var(--bg);
+ -webkit-tap-highlight-color:transparent;
+}
+button,.panel,.mission,.rank-card,.game-card,.stat,.badge-card{
+ transition:transform .18s var(--ease-out),border-color .2s ease,background .2s ease,opacity .2s ease,box-shadow .2s ease;
+}
+button:active{transform:scale(.975)}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.panel,.mission,.rank-card,.game-card,.stat,.badge-card{
+ box-shadow:0 7px 24px rgba(0,0,0,.12);
+}
+.panel:hover,.mission:hover,.rank-card:hover,.game-card:hover{
+ border-color:#454545;
+}
+.hero{box-shadow:0 18px 55px rgba(0,0,0,.22)}
+.progress-fill{transition:width .65s var(--ease-out)}
+.rank-progress-fill{transition:width .7s var(--ease-out)}
+.rank-progress-marker{
+ width:9px;height:9px;border-radius:50%;
+ background:var(--gold);border:1px solid #fff2bd;
+ box-shadow:0 0 8px #e7c56e,0 0 18px #e7c56e80;
+ transform:translate(-50%,-50%);
+}
+nav{
+ background:rgba(24,24,24,.86);
+ border-color:rgba(255,255,255,.09);
+ box-shadow:0 12px 36px rgba(0,0,0,.48),inset 0 1px rgba(255,255,255,.04);
+}
+nav button{min-width:48px}
+nav button.active{background:linear-gradient(180deg,#3a3a3a,#2b2b2b);box-shadow:inset 0 1px #ffffff12}
+.icon-btn{background:rgba(255,255,255,.025);transition:all .2s ease}
+.icon-btn:hover{border-color:#555;background:#202020}
+.modal-backdrop{animation:fadeIn .18s ease}
+.modal{animation:modalIn .28s var(--ease-out)}
+.toast{animation:toastIn .22s var(--ease-out)}
+.detective{animation:detectivePop .55s var(--ease-out)}
+.rank-card.current{border-color:#b99a4b;box-shadow:0 0 0 1px #b99a4b22,0 10px 30px #0005}
+.rank-card.locked{filter:saturate(.55)}
+.section-head{align-items:center}
+input,textarea,select{color:var(--white);background:#171717;border:1px solid #333;border-radius:12px}
+input:focus,textarea:focus,select:focus{outline:2px solid #e5393544;border-color:var(--red)}
+::selection{background:#e5393540;color:#fff}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes detectivePop{0%{transform:scale(.7) rotate(-8deg);opacity:.3}65%{transform:scale(1.12) rotate(3deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@media(hover:hover){
+ .rank-card:hover{transform:translateY(-3px)}
+ .game-card:hover{transform:translateY(-2px)}
+}
+@media(max-width:380px){
+ .app{padding-left:13px;padding-right:13px}
+ h1{font-size:32px}
+ nav button{min-width:43px;padding:9px 9px}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+</style>
+</head>
+<body>
+
+<div class="onboarding" id="onboarding">
+ <div class="onboard-inner">
+  <div class="onboard-mark">RECLAIM<span>.</span></div>
+  <div class="onboard-art"></div>
+  <div class="eyebrow" id="onboardEyebrow">A FRESH START</div>
+  <h1 id="onboardTitle">Take back<br>your time.</h1>
+  <p id="onboardText" style="font-size:13px;margin-top:10px">Build better routines, one small action at a time. No pressure. No perfection.</p>
+  <div class="onboard-dots"><i class="active"></i><i></i><i></i></div>
+  <button class="primary" style="width:100%;margin-top:10px" id="onboardNext" onclick="onboardNext()">LET'S BEGIN ↗</button>
+  <button class="text-btn" style="width:100%;margin-top:12px" onclick="skipOnboarding()">SKIP INTRO</button>
+ </div>
+</div>
+
+
+
+<div class="app">
+<header><div class="brand">RECLAIM<span>.</span></div><button class="icon-btn" onclick="showPage('profile')" aria-label="Profile" class="profile-top-btn">♙</button></header>
+
+<main>
+<section class="page active" id="home">
+  <div class="eyebrow">YOUR JOURNEY CONTINUES</div>
+  <h1>Take back<br>your time.</h1>
+  <p style="font-size:12px;margin:8px 0 19px">Small actions. Real progress.</p>
+  <div class="section-head"><h2>Dashboard</h2><button class="text-btn" onclick="showTutorial('dashboard')">ⓘ How RECLAIM works</button></div>
+  <div class="hero">
+    <div class="hero-top">
+      <div><div class="eyebrow">YOUR CONSISTENCY</div><div class="streak"><span id="streak">0</span><small> days</small></div><div class="small muted">Current progress streak</div></div>
+      <div class="level">CURRENT LEVEL<b id="level">01</b><span id="levelName">BEGINNER</span></div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="xpFill"></div></div>
+    <div class="progress-meta"><span id="xpText">0 / 500 XP</span><span id="nextLevel">500 XP to next level</span></div>
+  </div>
+  <div class="section">
+    <div class="section-head"><h2>Today's missions</h2><div><button class="text-btn" onclick="showTutorial('missions')">ⓘ Rules</button><button class="text-btn" onclick="showPage('quest')">All quests ↗</button></div></div>
+    <div class="mission-list" id="missions"></div>
+  </div>
+  <div class="section">
+    <div class="quick-card"><div class="quick-symbol">✳</div><div><b>Need a quick reset?</b><p>Take a moment and switch your focus.</p></div><button onclick="showPage('quest')">OPEN</button></div>
+  </div>
+  <div class="section">
+    <div class="section-head"><h2>Your snapshot</h2><span class="eyebrow">ALL TIME</span></div>
+    <div class="stats"><div class="stat"><span>TOTAL XP</span><strong id="totalXP">0</strong></div><div class="stat"><span>MISSIONS DONE</span><strong id="doneCount">0</strong></div><div class="stat"><span>RANK</span><strong id="homeRank" style="font-size:16px">EMBER IV</strong></div></div>
+  </div>
+</section>
+
+<section class="page" id="quest">
+  <div class="page-intro"><div class="eyebrow">PLAY WITH PURPOSE</div><h1>Quest hub.</h1><p>Choose a quick activity or complete a real-world mission.</p></div>
+  <div class="section-head"><h2>Mini-games · 23 total</h2><button class="text-btn" onclick="showTutorial('games')">ⓘ How to play</button></div>
+  <div class="tile-grid" id="gamesGrid"></div>
+  <div class="panel">
+    <div class="eyebrow">QUICK RESET</div><h2 style="margin:8px 0">A small change of scene.</h2><p class="small">Pick an activity, take a short break, and return when you're ready.</p>
+    <button class="primary" style="margin-top:15px" onclick="startRandom()">SURPRISE ME ↗</button>
+  </div>
+  <div id="gameContainer"></div>
+</section>
+
+<section class="page" id="world">
+  <div class="page-intro"><div class="row"><div><div class="eyebrow">YOUR PROGRESS, MADE VISIBLE</div><h1>Your world.</h1></div><button class="text-btn" onclick="showTutorial('world')">ⓘ Tutorial</button></div><p>Every healthy action helps your little world grow.</p></div>
+  <div class="world-scene" id="worldScene">🌱</div>
+  <div class="panel"><div class="row"><div><div class="eyebrow">WORLD STAGE</div><h2 id="worldStage">Seedling</h2></div><div style="font-size:28px" id="worldIcon">🌱</div></div><p class="small" id="worldDesc" style="margin-top:8px">Your journey starts with one small step.</p></div>
+  <div class="panel"><div class="row"><b>World energy</b><b id="worldEnergy">0%</b></div><div class="progress-track"><div class="progress-fill" id="worldFill"></div></div><p class="small">Earn XP from missions to unlock new stages.</p></div>
+</section>
+
+<section class="page" id="progress">
+  <div class="page-intro"><div class="row"><div><div class="eyebrow">LOOK HOW FAR YOU'VE COME</div><h1>Your progress.</h1></div><button class="text-btn" onclick="showTutorial('progress')">ⓘ Tutorial</button></div><p>Consistency is built one day at a time.</p></div>
+  <div class="stats"><div class="stat"><span>CURRENT STREAK</span><strong id="progressStreak">0</strong></div><div class="stat"><span>BEST STREAK</span><strong id="bestStreak">0</strong></div></div>
+  <div class="panel"><div class="row"><h2>Activity calendar</h2><span class="small muted" id="monthLabel"></span></div><div class="calendar" id="calendar"></div><p class="small" style="margin-top:12px">Green days show at least one completed mission.</p></div>
+  <div class="section"><div class="section-head"><h2>Achievements</h2><span class="eyebrow">MILESTONES</span></div><div class="badge-grid" id="badges"></div></div>
+  <div class="panel">
+    <div class="row"><div><div class="eyebrow">PRIVATE · MANUAL ONLY</div><h2>Personal streak</h2></div><button class="text-btn" onclick="showTutorial('personal')">ⓘ Rules</button></div>
+    <p class="small" style="margin:8px 0">RECLAIM never assumes anything from login, missions, or games. You decide whether to check in.</p>
+    <div class="row" style="margin:14px 0"><div><strong style="font-size:32px" id="personalStreak">0</strong><div class="small muted">days recorded</div></div><div class="small muted" id="personalCheckStatus">No check-in today</div></div>
+    <button class="primary" onclick="openHabitCheck()">UPDATE MY STREAK</button>
+  </div>
+  <div class="rank-section">
+    <div class="section-head"><h2>Rank journey</h2><button class="text-btn" onclick="showTutorial('rank')">ⓘ Rank rules</button></div>
+    <p class="small muted">Tap a rank card or swipe horizontally to explore every rank and its XP requirement.</p>
+    <div class="rank-scroll" id="rankCards"></div><div class="rank-detail" id="rankDetail"></div>
+  </div>
+  <div class="panel">
+    <div class="row"><div><div class="eyebrow">PROTECTION INVENTORY</div><h2>🛡️ <span id="cardCount">0</span> cards</h2></div><button class="text-btn" onclick="showTutorial('cards')">ⓘ Card rules</button></div>
+    <p class="small" style="margin:8px 0 12px">Protects RECLAIM daily missions and rank progression for one day. No XP is granted, and personal habit check-ins stay honest.</p>
+    <button class="secondary" onclick="useProtectionCard()">USE CARD TODAY</button>
+  </div>
+
+</section>
+
+<section class="page" id="profile">
+  <div class="page-intro"><div class="row"><div><div class="eyebrow">YOUR SPACE</div><h1>Profile.</h1></div><button class="text-btn" onclick="showTutorial('settings')">ⓘ Rules</button></div><p>Make RECLAIM work the way you want.</p></div>
+  <div class="panel"><div class="eyebrow">YOUR DISPLAY NAME</div><input id="displayName" maxlength="24" placeholder="Your name" style="margin-top:10px"><button class="primary" style="margin-top:10px" onclick="saveName()">SAVE NAME</button></div>
+  <div class="panel"><div class="row"><h2>Complete RECLAIM Guide</h2><button class="text-btn" onclick="showTutorial('all')">OPEN GUIDE ↗</button></div><p class="small" style="margin-top:8px">All features, conditions, streaks, XP, ranks, recovery and Protection Card rules in one place.</p></div>
+  <div class="panel"><h2>Private by design</h2><p class="small" style="margin:7px 0 14px">No account. No cloud sync. RECLAIM stores your progress in this browser on this device. Export a backup if you want to move it.</p><div class="row"><button class="secondary" onclick="exportData()">EXPORT BACKUP</button><button class="secondary" onclick="document.getElementById('importFile').click()">IMPORT</button></div><input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)"></div>
+  <div class="panel"><h2>Reset app data</h2><p class="small" style="margin:7px 0 14px">This permanently clears local progress on this device.</p><button class="secondary" onclick="resetData()">RESET ALL DATA</button></div>
+  <footer>RECLAIM v0.9 · TAKE BACK YOUR TIME<br>Progress over perfection. Your data stays yours.</footer>
+</section>
+</main>
+</div>
+<nav>
+<button class="active" data-page="home" onclick="showPage('home')"><span class="nav-icon">⌂</span>HOME</button>
+<button data-page="quest" onclick="showPage('quest')"><span class="nav-icon">✳</span>QUEST</button>
+<button data-page="world" onclick="showPage('world')"><span class="nav-icon">◈</span>WORLD</button>
+<button data-page="progress" onclick="showPage('progress')"><span class="nav-icon">▥</span>PROGRESS</button>
+
+</nav>
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()"><div class="modal-card" id="modalCard"></div></div>
+<script>
+const KEY='reclaim_v01';
+const defaultState={xp:0,streak:0,best:0,lastCheck:null,done:{},days:{},name:'',totalDone:0};
+let state=load();
+const missions=[
+ {id:'study',title:'Study for 25 minutes',sub:'Give one thing your full attention',xp:100},
+ {id:'walk',title:'Take a short walk',sub:'Move, stretch, get some fresh air',xp:75},
+ {id:'focus',title:'Complete a focus session',sub:'Make a little progress on a goal',xp:100},
+ {id:'read',title:'Read for 10 minutes',sub:'A few pages still count',xp:50}
+];
+function load(){try{return {...defaultState,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...defaultState}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+function today(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function yesterday(){let d=new Date();d.setDate(d.getDate()-1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function addXP(n){state.xp+=n;toast('+'+n+' XP earned');save()}
+function levelInfo(){
+ let total=Math.max(0,Number(state.xp)||0),level=1,start=0,need=500;
+ while(total>=start+need){start+=need;level++;need+=200}
+ const names=['BEGINNER','EXPLORER','DISCIPLINE BUILDER','FOCUS MASTER','TIME ARCHITECT','RECLAIMED','ELITE','LEGEND'];
+ return {level,name:names[Math.min(names.length-1,Math.floor((level-1)/5))],within:total-start,span:need};
+}
+function xpForLevel(target){let total=0,need=500;for(let l=1;l<target;l++){total+=need;need+=200}return total;}
+
+
+function checkRecoveryState(){
+ const d=today(),y=ydayKey();
+ if(state.recoveryDate && state.recoveryDate!==d){
+   if(!state.successDays[state.recoveryDate] && !state.recoveryPenaltyApplied){
+     rankStepDown();state.recoveryPenaltyApplied=true;state.streak=0;state.lastCheck=d;toast('Recovery missed · rank adjusted one step');
+   }
+   state.recoveryDate=null;state.recoveryPenaltyApplied=false;
+ }
+ if(state.lastCheck && state.lastCheck!==y && state.lastCheck!==d && !state.protectedDays[y] && !state.successDays[y]){
+   state.recoveryDate=d;state.recoveryPenaltyApplied=false;
+ }
+}
+
+function complete(id){
+ const day=today(), done=state.done[day]||[], mission=missions.find(m=>m.id===id), points=mission?.xp||25;
+ if(done.includes(id)){
+   state.done[day]=done.filter(x=>x!==id);
+   state.xp=Math.max(0,state.xp-points);
+   state.totalDone=Math.max(0,state.totalDone-1);
+   if(state.done[day].length===0) delete state.days[day];
+   toast('Mission unchecked · XP returned');
+ }else{
+   state.done[day]=[...done,id];state.days[day]=true;state.totalDone++;
+   state.xp+=points;toast('+'+points+' XP earned');updateStreak();
+ }
+ save();
+}
+function updateStreak(){let t=today();if(state.lastCheck!==t){state.streak=state.lastCheck===yesterday()?state.streak+1:1;state.best=Math.max(state.best,state.streak);state.lastCheck=t}}
+
+let selectedRank=0;
+function renderRankCards(){
+ const host=document.getElementById('rankCards');if(!host)return;
+ const titles=['EMBER','PHANTOM','VANGUARD','NIGHTFALL','OBSIDIAN','ASCENDANT','SOVEREIGN','RECLAIMER'],levels=[1,5,10,15,20,25,30,40],cur=state.rankIndex||0;
+ host.innerHTML=titles.map((name,i)=>{let req=xpForLevel(levels[i]),unlock=levelInfo().level>=levels[i];return `<button class="rank-card ${i===cur?'current':''} ${unlock?'':'locked'}" onclick="selectRank(${i})"><span class="rank-num">RANK ${String(i+1).padStart(2,'0')} · ${unlock?'UNLOCKED':'LOCKED'}</span><span class="rank-gem">${i===cur?'✦':'◇'}</span><h3>${name}</h3><div class="rank-min">Minimum Level ${levels[i]}</div><div class="rank-min">Unlock: ${req.toLocaleString()} total XP</div><div class="rank-min">Divisions IV → III → II → I</div></button>`}).join('');
+ selectRank(selectedRank);
+}
+function selectRank(i){
+ selectedRank=i;const titles=['EMBER','PHANTOM','VANGUARD','NIGHTFALL','OBSIDIAN','ASCENDANT','SOVEREIGN','RECLAIMER'],levels=[1,5,10,15,20,25,30,40];
+ let total=Number(state.xp)||0,req=xpForLevel(levels[i]),start=req,end=(i<levels.length-1?xpForLevel(levels[i+1]):xpForLevel(levels[i])+5000),pct=Math.max(0,Math.min(100,(total-start)/(end-start)*100));
+ const detail=document.getElementById('rankDetail');if(!detail)return;
+ detail.innerHTML=`<div class="eyebrow">${i===(state.rankIndex||0)?'YOUR CURRENT RANK':'RANK PREVIEW'}</div><h2 style="margin:5px 0">${titles[i]} ${i===(state.rankIndex||0)?['IV','III','II','I'][state.division||0]:''}</h2><p class="small muted">Unlocks at Level ${levels[i]} · ${req.toLocaleString()} total XP</p><div class="rank-progress"><div class="rank-progress-fill" style="width:${pct}%"></div><div class="rank-progress-marker" style="left:${pct}%"></div></div><div class="rank-xp-meta"><span>${start.toLocaleString()} XP</span><span style="color:#f4d47b">${total.toLocaleString()} XP</span><span>${end.toLocaleString()} XP</span></div><p class="small" style="margin-top:10px">${total<req?`${(req-total).toLocaleString()} XP remaining to unlock this rank.`:'Level requirement met. Rank divisions are earned through consistency, not XP.'}</p>`;
+}
+
+function render(){
+ let li=levelInfo();document.getElementById('streak').textContent=state.streak;document.getElementById('level').textContent=String(li.level).padStart(2,'0');document.getElementById('levelName').textContent=li.name;document.getElementById('xpFill').style.width=(li.within/li.span*100)+'%';document.getElementById('xpText').textContent=li.within+' / '+li.span+' XP';document.getElementById('nextLevel').textContent=(li.span-li.within)+' XP to next level';
+ document.getElementById('totalXP').textContent=state.xp;document.getElementById('doneCount').textContent=state.totalDone;document.getElementById('progressStreak').textContent=state.streak;document.getElementById('bestStreak').textContent=state.best;renderRankCards();
+ checkRecoveryState();
+ let done=state.done[today()]||[],isRecovery=state.recoveryDate===today();
+ const recoveryTasks=[['Complete a 30-minute focus block','Recovery mission · steady and manageable'],['Reset one small space','Recovery mission · create a calmer environment'],['Review tomorrow’s plan','Recovery mission · set up a fresh start']];
+ document.getElementById('missions').innerHTML=missions.map((m,i)=>{let title=isRecovery?recoveryTasks[i%3][0]:m.title,sub=isRecovery?recoveryTasks[i%3][1]:m.sub;return `<div class="mission ${done.includes(m.id)?'done':''}"><button class="check" aria-label="Complete ${title}" onclick="complete('${m.id}')">${done.includes(m.id)?'✓':''}</button><div class="mission-copy"><div class="mission-title">${title}</div><div class="mission-sub">${sub}</div></div><span class="xp">+${m.xp} XP</span></div>`}).join('');
+ let stage=Math.min(4,Math.floor(state.xp/500));let stages=[['Seedling','🌱','Your journey starts with one small step.'],['Sprout','🌿','Your habits are beginning to take root.'],['Growing','🌳','Small actions are building momentum.'],['Flourishing','🌲','Your consistency is shaping your world.'],['Sanctuary','🏡','A world built through steady progress.']];let s=stages[stage];document.getElementById('worldStage').textContent=s[0];document.getElementById('worldIcon').textContent=s[1];document.getElementById('worldScene').textContent=s[1];document.getElementById('worldDesc').textContent=s[2];document.getElementById('worldEnergy').textContent=(state.xp%500/5)+'%';document.getElementById('worldFill').style.width=(state.xp%500/5)+'%';
+ renderCalendar();renderBadges();
+}
+function renderCalendar(){let d=new Date(),year=d.getFullYear(),month=d.getMonth(),first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate();document.getElementById('monthLabel').textContent=d.toLocaleString('en',{month:'long',year:'numeric'});let out='';for(let i=0;i<first;i++)out+='<div></div>';for(let n=1;n<=days;n++){let key=`${year}-${String(month+1).padStart(2,'0')}-${String(n).padStart(2,'0')}`;out+=`<div class="day ${state.days[key]?'done':''} ${key===today()?'today':''}">${n}</div>`}document.getElementById('calendar').innerHTML=out}
+function renderBadges(){let items=[['🌱','First step',state.totalDone>=1],['⚡','100 XP',state.xp>=100],['🏅','500 XP',state.xp>=500],['🔥','7-day streak',state.best>=7],['🌟','25 missions',state.totalDone>=25],['🏡','World builder',state.xp>=2000]];document.getElementById('badges').innerHTML=items.map(x=>`<div class="badge-item" style="opacity:${x[2]?1:.35}"><div class="medal">${x[0]}</div><small>${x[1]}</small></div>`).join('')}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='profile')document.getElementById('displayName').value=state.name||'';if(id==='progress')renderRankCards()}
+let toastTimer;function toast(msg){let el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1800)}
+function game(html){document.getElementById('gameContainer').innerHTML=`<div class="panel">${html}</div>`;document.getElementById('gameContainer').scrollIntoView({behavior:'smooth',block:'start'})}
+function startRandom(){let a=[startReaction,startMemory,startBreathing,startFocus];a[Math.floor(Math.random()*a.length)]()}
+let reactionTimer=null,reactionStart=0;
+function startReaction(){game(`<div class="game-area"><div class="eyebrow">QUICK RESET / REACTION</div><h2>Ready, steady, focus.</h2><p>Tap the panel when it turns green. Wait for the signal.</p><button class="game-pad" id="reactionPad" onclick="reactionTap()">TAP TO START</button><div class="small muted" id="reactionResult">A calm little challenge. No pressure.</div></div>`);window.reactionMode='ready'}
+function reactionTap(){let pad=document.getElementById('reactionPad'),result=document.getElementById('reactionResult');if(!pad)return;if(window.reactionMode==='ready'){window.reactionMode='wait';pad.textContent='WAIT...';pad.disabled=true;let delay=1200+Math.random()*2300;reactionTimer=setTimeout(()=>{window.reactionMode='go';reactionStart=performance.now();pad.disabled=false;pad.classList.add('target');pad.textContent='TAP NOW';},delay)}else if(window.reactionMode==='wait'){clearTimeout(reactionTimer);window.reactionMode='ready';pad.disabled=false;pad.textContent='TOO SOON — TRY AGAIN';result.textContent='No worries. Give it another try.'}else if(window.reactionMode==='go'){let ms=Math.round(performance.now()-reactionStart);window.reactionMode='done';pad.classList.remove('target');pad.textContent=ms+' ms';result.textContent='Nice focus. You completed the challenge.';addXP(25);}}
+function startMemory(){let symbols=['◆','●','▲','✦','■','⬟'];let deck=[...symbols,...symbols].sort(()=>Math.random()-.5);let open=[],matched=[];game(`<div class="game-area"><div class="eyebrow">QUICK RESET / MEMORY</div><h2>Find the pairs.</h2><p>Match all six pairs. Take your time.</p><div class="tile-grid" id="memoryGrid">${deck.map((s,i)=>`<button class="tile" style="min-height:65px;text-align:center;font-size:23px" onclick="flipCard(${i})" id="card${i}">＋</button>`).join('')}</div><p id="memoryStatus">0 / 6 pairs found</p></div>`);window.memoryGame={deck,open,matched,locked:false}}
+function flipCard(i){let g=window.memoryGame;if(!g||g.locked||g.matched.includes(i)||g.open.includes(i))return;document.getElementById('card'+i).textContent=g.deck[i];g.open.push(i);if(g.open.length===2){g.locked=true;let [a,b]=g.open;if(g.deck[a]===g.deck[b]){g.matched.push(a,b);g.open=[];g.locked=false;document.getElementById('memoryStatus').textContent=(g.matched.length/2)+' / 6 pairs found';if(g.matched.length===12){document.getElementById('memoryStatus').textContent='All pairs matched. Well done!';addXP(50)}}else setTimeout(()=>{[a,b].forEach(n=>document.getElementById('card'+n).textContent='＋');g.open=[];g.locked=false},700)}}
+let breathInterval=null;
+function startBreathing(){game(`<div class="game-area"><div class="eyebrow">QUICK RESET / BREATHE</div><h2>Take a slow moment.</h2><p>Follow the gentle circle. Breathe comfortably; stop if you feel uncomfortable.</p><div class="breath-orb"></div><div id="breathText">Breathe in as the circle expands, out as it softens.</div><button class="secondary" style="margin-top:20px" onclick="finishBreathing()">I'M DONE</button></div>`)}
+function finishBreathing(){addXP(15);document.getElementById('gameContainer').innerHTML='<div class="panel"><b>Good reset.</b><p class="small" style="margin-top:6px">Take that calmer feeling into your next activity.</p></div>'}
+let focusTimer=null,focusSeconds=0;
+function startFocus(){game(`<div class="game-area"><div class="eyebrow">QUICK RESET / FOCUS</div><h2>One thing at a time.</h2><p>Start a short 5-minute focus sprint.</p><div class="game-pad" style="display:block;padding:45px 10px"><div id="focusClock">05:00</div><div class="sub" id="focusStatus">Ready when you are</div></div><button class="primary" id="focusButton" onclick="toggleFocus()">START FOCUS</button></div>`);focusSeconds=300;window.focusRunning=false}
+function toggleFocus(){let btn=document.getElementById('focusButton');if(!btn)return;if(window.focusRunning){clearInterval(focusTimer);window.focusRunning=false;btn.textContent='RESUME'}else{window.focusRunning=true;btn.textContent='PAUSE';focusTimer=setInterval(()=>{focusSeconds--;let m=String(Math.floor(focusSeconds/60)).padStart(2,'0'),s=String(focusSeconds%60).padStart(2,'0');let clock=document.getElementById('focusClock');if(clock)clock.textContent=m+':'+s;if(focusSeconds<=0){clearInterval(focusTimer);window.focusRunning=false;btn.textContent='COMPLETED';btn.disabled=true;nextGameRound(3,'Focus sprint complete! Resetting for another round…');document.getElementById('focusStatus').textContent='You showed up for yourself.';addXP(100)}},1000)}}
+function saveName(){state.name=document.getElementById('displayName').value.trim();save();toast('Name saved')}
+function exportData(){let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='reclaim-backup.json';a.click();URL.revokeObjectURL(url);toast('Backup exported')}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState,...d};save();toast('Backup imported')}catch(err){toast('Invalid backup file')}};r.readAsText(f)}
+function resetData(){if(confirm('Delete all RECLAIM progress stored on this device?')){localStorage.removeItem(KEY);state={...defaultState};save();toast('Local data reset')}}
+
+let onboardStep=0;
+function onboardNext(){
+ const titles=[['A FRESH START','Take back<br>your time.','Build better routines, one small action at a time. No pressure. No perfection.'],['YOUR SPACE, YOUR RULES','Private by<br>design.','No account, no cloud profile. Your progress stays on this device.'],['PROGRESS OVER PERFECTION','Let’s begin.','Celebrate small wins. If a day goes differently than planned, simply start again.']];
+ onboardStep++;
+ if(onboardStep>=titles.length){skipOnboarding();return}
+ const t=titles[onboardStep];document.getElementById('onboardEyebrow').textContent=t[0];document.getElementById('onboardTitle').innerHTML=t[1];document.getElementById('onboardText').textContent=t[2];
+ document.querySelectorAll('.onboard-dots i').forEach((d,i)=>d.classList.toggle('active',i===onboardStep));
+ document.getElementById('onboardNext').textContent=onboardStep===titles.length-1?'START RECLAIM ↗':'CONTINUE ↗';
+}
+function skipOnboarding(){localStorage.setItem('reclaim_onboarded_v02','1');document.getElementById('onboarding').classList.remove('show')}
+if(!localStorage.getItem('reclaim_onboarded_v02'))document.getElementById('onboarding').classList.add('show');
+
+function gameReward(id, points=20){
+ const key='game_'+id+'_'+today();
+ if(state[key]){toast('Already earned today — play for fun!');return}
+ state[key]=true;state.xp+=points;toast('+'+points+' XP · game complete');save();
+}
+function startSequence(){
+ const seq=Array.from({length:5},()=>Math.floor(Math.random()*9)+1).join(' ');
+ const box=document.getElementById('gameContainer');
+ box.innerHTML=`<div class="panel"><div class="eyebrow">MEMORY CHALLENGE</div><h2>Number sequence</h2><p class="small">Memorize these numbers. They hide in 4 seconds.</p><div class="game-big" id="seqDisplay">${seq}</div><button class="primary" onclick="document.getElementById('seqDisplay').textContent='•• •• ••';document.getElementById('seqAnswer').style.display='block'">Hide numbers</button><div id="seqAnswer" style="display:none;margin-top:14px"><input class="game-input" id="seqInput" placeholder="Enter numbers with spaces"><div class="game-actions"><button onclick="checkSequence('${seq}')">Check</button><button onclick="startSequence()">Try another</button></div><p id="seqResult" class="small"></p></div></div>`;
+ setTimeout(()=>{const el=document.getElementById('seqDisplay');if(el)el.textContent='•• •• ••';const a=document.getElementById('seqAnswer');if(a)a.style.display='block'},4000);
+}
+function checkSequence(answer){const input=(document.getElementById('seqInput').value||'').trim().replace(/\s+/g,' ');const result=document.getElementById('seqResult');if(input===answer){result.textContent='Perfect memory! New sequence loading…';gameReward('sequence',20);nextGameRound(4,'Correct sequence! Loading a new one…')}else result.textContent='Not quite — no penalty. Try again or start a new sequence.'}
+const wordBank=['PLANET','GARDEN','FOCUS','ENERGY','JOURNEY','BRIGHT','CREATE','MOMENT'];
+function startWordMix(){
+ const word=wordBank[Math.floor(Math.random()*wordBank.length)];let mix=word.split('').sort(()=>Math.random()-.5).join('');if(mix===word)mix=word.slice(1)+word[0];
+ document.getElementById('gameContainer').innerHTML=`<div class="panel"><div class="eyebrow">WORD PUZZLE</div><h2>Word mix</h2><p class="small">Unscramble this word:</p><div class="game-big">${mix}</div><input class="game-input" id="wordGuess" placeholder="Your answer" autocapitalize="characters"><div class="game-actions"><button onclick="checkWord('${word}')">Check</button><button onclick="startWordMix()">New word</button></div><p id="wordResult" class="small"></p></div>`;
+}
+function checkWord(word){const guess=(document.getElementById('wordGuess').value||'').trim().toUpperCase();const result=document.getElementById('wordResult');if(guess===word){result.textContent='Correct! New word loading…';gameReward('wordmix',15);nextGameRound(5,'Correct word! Loading a new one…')}else result.textContent='Almost! No penalty—try again.'}
+function startTapSprint(){
+ const box=document.getElementById('gameContainer');let count=0,seconds=15,started=false,timer=null;
+ box.innerHTML=`<div class="panel"><div class="eyebrow">15-SECOND CHALLENGE</div><h2>Tap sprint</h2><p class="small">Tap the target as many times as you can.</p><div class="game-big" id="tapCount">0</div><button class="primary" id="tapTarget">START</button><p id="tapStatus" class="small">Ready when you are.</p></div>`;
+ const target=document.getElementById('tapTarget');
+ target.onclick=()=>{
+   if(!started){
+     started=true;target.textContent='TAP!';document.getElementById('tapStatus').textContent='Go!';
+     timer=setInterval(()=>{
+       seconds--;
+       if(seconds<=0){
+         clearInterval(timer);target.disabled=true;target.textContent='FINISHED';
+         document.getElementById('tapStatus').textContent=`You tapped ${count} times!`;
+         if(count>=20)gameReward('tapsprint',15);
+       }
+     },1000);
+   }
+   if(seconds>0){count++;document.getElementById('tapCount').textContent=count;}
+ };
+}
+
+
+// ===== RECLAIM v0.5 systems =====
+const rankNames=['EMBER','PHANTOM','VANGUARD','NIGHTFALL','OBSIDIAN','ASCENDANT','SOVEREIGN','RECLAIMER'];
+const rankLevels=[1,5,10,15,20,25,30,40];
+const gameCatalog=[
+ ['Reaction Test','◉','Tap when the panel turns green.'],['Memory Match','▦','Find all matching symbol pairs.'],['Breathing Reset','◎','Follow a gentle breathing rhythm.'],['Focus Sprint','◷','Complete a short focused timer.'],['Number Sequence','123','Memorize and repeat numbers.'],['Word Mix','Aa','Unscramble a word.'],['Tap Sprint','✦','Tap as many times as you can.'],
+ ['Quick Math','＋','Solve a simple mental math question.'],['Color Match','🎨','Choose the color named on screen.'],['Odd One Out','◇','Find the item that does not belong.'],['Pattern Recall','▤','Remember a short symbol pattern.'],['Word Recall','ABC','Remember a word and type it.'],['True or False','✓','Answer a light general-knowledge prompt.'],['Number Guess','？','Guess a number from 1 to 10.'],['Reaction Choice','↗','Tap the matching direction.'],['Shape Count','⬡','Count the shapes shown.'],['Typing Burst','⌨','Type a short phrase accurately.'],['Mini Sudoku','▦','Fill a tiny 3×3 number grid.'],['Sequence Builder','→','Continue a simple sequence.'],['Focus Finder','◎','Find the target symbol among distractions.'],['Quick Trivia','✧','Answer a friendly everyday trivia question.'],['Balance Challenge','⚖','Complete a steady 10-tap focus challenge.'],['Mindful Pause','☁','Take a brief mindful pause.']
+];
+function dateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function ydayKey(){let d=new Date();d.setDate(d.getDate()-1);return dateKey(d)}
+function ensureState(){state.dailyXP=state.dailyXP||{};state.rankIndex=Number.isInteger(state.rankIndex)?state.rankIndex:0;state.division=Number.isInteger(state.division)?state.division:0;state.rankDays=state.rankDays||0;state.successDays=state.successDays||{};state.protectionCards=state.protectionCards||0;state.protectedDays=state.protectedDays||{};state.personalStreak=state.personalStreak||0;state.personalBest=state.personalBest||0;state.personalLast=null;state.personalCheckins=state.personalCheckins||{};state.personalMilestones=state.personalMilestones||0;state.recoveryUsed=state.recoveryUsed||{};state.xp=Number(state.xp)||0}
+ensureState();
+if(!state.rankDivisionMigrationV1){
+  if((state.rankIndex||0)===0 && (state.rankDays||0)===0 && !Object.keys(state.successDays||{}).length && (state.xp||0)<xpForLevel(5)){
+    state.division=0;
+  }
+  state.rankDivisionMigrationV1=true;
+  localStorage.setItem(KEY,JSON.stringify(state));
+}
+function addXP(n){
+ const d=today();state.dailyXP=state.dailyXP||{};let used=state.dailyXP[d]||0,allowed=Math.max(0,600-used),awarded=Math.min(n,allowed);
+ if(awarded>0){state.xp+=awarded;state.dailyXP[d]=used+awarded;toast('+'+awarded+' XP earned')}
+ else toast('Daily XP cap reached · play for fun');
+ save();return awarded;
+}
+
+function checkRecoveryState(){
+ const d=today(),y=ydayKey();
+ if(state.recoveryDate && state.recoveryDate!==d){
+   if(!state.successDays[state.recoveryDate] && !state.recoveryPenaltyApplied){
+     rankStepDown();state.recoveryPenaltyApplied=true;state.streak=0;state.lastCheck=d;toast('Recovery missed · rank adjusted one step');
+   }
+   state.recoveryDate=null;state.recoveryPenaltyApplied=false;
+ }
+ if(state.lastCheck && state.lastCheck!==y && state.lastCheck!==d && !state.protectedDays[y] && !state.successDays[y]){
+   state.recoveryDate=d;state.recoveryPenaltyApplied=false;
+ }
+}
+
+function complete(id){
+ checkRecoveryState(); const day=today(),done=state.done[day]||[],mission=missions.find(m=>m.id===id),points=mission?.xp||25;
+ state.missionXP=state.missionXP||{};
+ if(done.includes(id)){
+  state.done[day]=done.filter(x=>x!==id);let actual=state.missionXP[day]?.[id]||0;
+  state.xp=Math.max(0,state.xp-actual);state.dailyXP[day]=Math.max(0,(state.dailyXP[day]||0)-actual);
+  if(state.missionXP[day])delete state.missionXP[day][id];
+  state.totalDone=Math.max(0,state.totalDone-1);if(!state.done[day].length)delete state.days[day];
+  delete state.successDays[day];state.rankDays=0;toast('Mission unchecked · XP returned');
+ }else{
+  state.done[day]=[...done,id];state.days[day]=true;state.totalDone++;
+  let awarded=addXP(points);state.missionXP[day]=state.missionXP[day]||{};state.missionXP[day][id]=awarded;
+  updateDailyProgress();
+ }
+ save();
+}
+function updateDailyProgress(){
+ let d=today(),count=(state.done[d]||[]).length;
+ if(state.protectedDays[d]){state.successDays[d]=true;return}
+ if(count>=3&&!state.successDays[d]){
+   state.successDays[d]=true;
+   if(state.recoveryDate===d){state.recoveryDate=null;state.recoveryPenaltyApplied=false;toast('Recovery complete · rank protected')}
+   state.rankDays=(state.rankDays||0)+1;
+   state.streak=state.lastCheck===ydayKey()?state.streak+1:1;state.lastCheck=d;state.best=Math.max(state.best,state.streak);
+   if(state.rankDays>=3){promoteRank();state.rankDays=0}
+ }
+}
+function rankLabel(){return `${rankNames[state.rankIndex]||'EMBER'} ${['IV','III','II','I'][state.division]}`}
+function promoteRank(){
+ if(state.division>0){state.division--;}
+ else if(state.rankIndex<7){let next=state.rankIndex+1;if(levelInfo().level>=rankLevels[next]){state.rankIndex=next;state.division=3;}else{state.division=0;toast(`Level ${rankLevels[next]} required for ${rankNames[next]}`)}}
+ else toast('Highest rank reached — keep building consistency!');
+}
+function rankStepDown(){if(state.division<3)state.division++;else if(state.rankIndex>0){state.rankIndex--;state.division=0;}state.rankDays=0}
+
+function render(){
+ let li=levelInfo();document.getElementById('streak').textContent=state.streak||0;document.getElementById('level').textContent=String(li.level).padStart(2,'0');document.getElementById('levelName').textContent=li.name;document.getElementById('xpFill').style.width=(li.within/li.span*100)+'%';document.getElementById('xpText').textContent=li.within+' / '+li.span+' XP';document.getElementById('nextLevel').textContent=(li.span-li.within)+' XP to next level';
+ document.getElementById('totalXP').textContent=state.xp;document.getElementById('doneCount').textContent=state.totalDone;document.getElementById('homeRank').textContent=rankLabel();document.getElementById('progressStreak').textContent=state.streak||0;document.getElementById('bestStreak').textContent=state.best||0;
+ checkRecoveryState();
+ let done=state.done[today()]||[],isRecovery=state.recoveryDate===today();
+ const recoveryTasks=[['Complete a 30-minute focus block','Recovery mission · steady and manageable'],['Reset one small space','Recovery mission · create a calmer environment'],['Review tomorrow’s plan','Recovery mission · set up a fresh start']];
+ document.getElementById('missions').innerHTML=missions.map((m,i)=>{let title=isRecovery?recoveryTasks[i%3][0]:m.title,sub=isRecovery?recoveryTasks[i%3][1]:m.sub;return `<div class="mission ${done.includes(m.id)?'done':''}"><button class="check" aria-label="Complete ${title}" onclick="complete('${m.id}')">${done.includes(m.id)?'✓':''}</button><div class="mission-copy"><div class="mission-title">${title}</div><div class="mission-sub">${sub}</div></div><span class="xp">+${m.xp} XP</span></div>`}).join('');
+ let stage=Math.min(4,Math.floor(state.xp/500)),stages=[['Seedling','🌱','Your journey starts with one small step.'],['Sprout','🌿','Your habits are beginning to take root.'],['Growing','🌳','Small actions are building momentum.'],['Flourishing','🌲','Your consistency is shaping your world.'],['Sanctuary','🏡','A world built through steady progress.']],s=stages[stage];
+ document.getElementById('worldStage').textContent=s[0];document.getElementById('worldIcon').textContent=s[1];document.getElementById('worldScene').textContent=s[1];document.getElementById('worldDesc').textContent=s[2];document.getElementById('worldEnergy').textContent=(state.xp%500/5)+'%';document.getElementById('worldFill').style.width=(state.xp%500/5)+'%';
+ renderCalendar();renderBadges();
+ if(document.getElementById('gamesGrid'))renderGames();
+ if(document.getElementById('personalStreak')){document.getElementById('personalStreak').textContent=state.personalStreak||0;document.getElementById('personalCheckStatus').textContent=state.personalCheckins[today()]?'Checked in today':'No check-in today';document.getElementById('rankName').textContent=rankLabel();document.getElementById('rankProgress').textContent=`${state.rankDays||0} / 3 successful days to next division · Level ${li.level}`;document.getElementById('cardCount').textContent=state.protectionCards||0}
+}
+function renderGames(){document.getElementById('gamesGrid').innerHTML=gameCatalog.map((g,i)=>`<button class="tile game-card" onclick="launchGame(${i})"><span class="tile-icon">${g[1]}</span><b>${String(i+1).padStart(2,'0')}. ${g[0]}</b><small>${g[2]}</small><small style="color:#e53935;margin-top:8px">Play · XP limited daily</small></button>`).join('')}
+function gameReward(id,points=15){let key='game_'+id+'_'+today();if(state[key]){toast('Daily reward already claimed · keep playing for fun');return}state[key]=true;addXP(points)}
+function modal(content){document.getElementById('modalCard').innerHTML=content;document.getElementById('modalOverlay').classList.add('show')}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show')}
+const tutorials={
+ missions:['Daily Missions',['Complete at least 3 missions in a day to count as a successful RECLAIM day.','Tap a checked mission again to undo it; its awarded XP is returned.','Daily XP from all missions and games shares a hard 600 XP cap.','Games never count as daily missions or rank progress.']],
+ games:['Mini-games · 23 total',['There are exactly 23 mini-games. Each game can award XP once per day.','Game XP contributes to level XP only, never rank or personal habit streak.','All activities share the 600 XP daily cap. Replay games for fun after claiming the reward.','Games are short, optional, and never required to maintain your streak.']],
+ rank:['Ranks & Divisions',['Ranks: EMBER, PHANTOM, VANGUARD, NIGHTFALL, OBSIDIAN, ASCENDANT, SOVEREIGN, RECLAIMER.','Each rank has divisions IV → III → II → I. Three successful days promote one division.','Level minimums for ranks: 1, 5, 10, 15, 20, 25, 30, 40.','XP raises level only; consistency raises rank. Recovery failure can lower one rank step.']],
+ cards:['Protection Cards',['Earn one card for each 7-day milestone in your manually tracked personal habit streak.','Use one card to protect RECLAIM missions, app streak and rank progression for today.','Card use grants no XP and does not mark your personal habit as successful.','Cards are consumed on use. Inventory is capped at 3 to prevent hoarding.']],
+ personal:['Personal Habit Streak',['This section is fully manual. RECLAIM never infers your habit from login, tasks, or games.','YES opens a detective confirmation. Only the second YES records today.','NO records a missed check-in and shows the supportive Unsolved Case animation.','This is private self-reporting, not external verification. A setback is not a judgment.']],
+ progress:['Progress & Recovery',['A successful RECLAIM day requires at least 3 daily missions or a Protection Card.','After a missed day, the next day is a recovery day with 3 slightly more challenging but safe missions.','If recovery succeeds, rank is protected. If recovery is missed, rank drops one step.','Cards protect RECLAIM progression only; they do not change your personal habit check-in.']],
+ world:['Your World',['World stages reflect accumulated XP.','Missions and games can grow your world; daily XP is capped at 600.','The world is visual motivation, not a rank system.']],
+ settings:['Settings & Privacy',['No account or cloud sync: data stays in this browser on this device.','Export a JSON backup before changing devices. Import only a backup you trust.','Reset permanently clears local progress.','Tutorials are available inside each section.']]
+};
+function showTutorial(key){let t=tutorials[key]||tutorials.settings;modal(`<div class="eyebrow">RECLAIM GUIDE</div><h2 style="margin:8px 0 12px">${t[0]}</h2><ul class="tutorial-list">${t[1].map(x=>`<li>${x}</li>`).join('')}</ul><button class="primary" style="width:100%;margin-top:15px" onclick="closeModal()">GOT IT</button>`)}
+function openHabitCheck(){
+ if(state.personalCheckins[today()]){modal('<div class="eyebrow">CASE ALREADY FILED</div><h2>Today’s check-in is recorded.</h2><p class="small" style="margin:10px 0">You can review your progress tomorrow. No need to submit twice.</p><button class="primary" onclick="closeModal()">CLOSE</button>');return}
+ modal(`<div class="eyebrow">PRIVATE HABIT CHECK-IN</div><h2 style="margin:8px 0">Case File: Today</h2><div class="detective">🕵️</div><p style="margin:10px 0 16px">Did you successfully follow your personal goal today?</p><p class="small">Your answer is private. RECLAIM will never assume it.</p><div class="game-actions"><button class="primary" onclick="habitYesFirst()">YES</button><button onclick="habitNo()">NO</button><button onclick="closeModal()">CANCEL</button></div>`)
+}
+function habitYesFirst(){modal(`<div class="eyebrow">CASE VERIFICATION</div><div class="detective">🕵️‍♂️</div><h2 style="text-align:center;margin:10px 0">Are you absolutely sure?</h2><p class="small" style="text-align:center;margin-bottom:15px">Confirming will record today’s personal check-in.</p><div class="case-stamp">VERIFY YOUR REPORT</div><div class="game-actions" style="margin-top:20px"><button class="primary" onclick="habitYesConfirm()">YES, CONFIRM</button><button onclick="openHabitCheck()">GO BACK</button></div>`)
+}
+function habitYesConfirm(){
+ closeModal();let d=today();if(state.personalCheckins[d])return;
+ state.personalCheckins[d]='yes';state.personalStreak=state.personalCheckins[ydayKey()]==='yes'?(state.personalStreak||0)+1:1;state.personalBest=Math.max(state.personalBest,state.personalStreak);
+ let milestone=Math.floor(state.personalStreak/7);
+ if(milestone>(state.personalMilestones||0)){state.personalMilestones=milestone;if(state.protectionCards<3){state.protectionCards++;toast('7-day milestone · Protection Card earned! 🛡️')}else toast('7-day milestone · card inventory full (max 3)')}
+ save();modal(`<div class="eyebrow">CASE CLOSED</div><div class="detective">🔎</div><h2 style="text-align:center">Check-in recorded.</h2><p style="text-align:center;margin:10px 0">Your personal streak is now ${state.personalStreak} days. Keep going at your own pace.</p><button class="primary" style="width:100%" onclick="closeModal()">CONTINUE</button>`)
+}
+function habitNo(){
+ closeModal();state.personalCheckins[today()]='no';state.personalStreak=0;state.personalMilestones=0;save();
+ modal(`<div class="eyebrow">CASE STATUS</div><div class="detective">🗂️</div><div class="case-stamp" style="margin:15px 0">CASE UNRESOLVED</div><h2>A setback is a clue, not the conclusion.</h2><p style="margin:10px 0 16px">Today didn't go as planned. This one day doesn't define your journey. Tomorrow is another opportunity.</p><button class="primary" style="width:100%" onclick="closeModal()">ACCEPT & CONTINUE</button>`)
+}
+function useProtectionCard(){
+ if(!state.protectionCards){toast('No Protection Cards available yet');return}
+ if(state.protectedDays[today()]){toast('A card has already protected today');return}
+ modal(`<div class="eyebrow">PROTECTION CARD</div><div class="detective">🛡️</div><h2>Protect today’s RECLAIM progress?</h2><p class="small" style="margin:10px 0">This protects app missions, streak and rank progression for today. It grants no XP and does not alter your personal habit streak.</p><div class="game-actions"><button class="primary" onclick="confirmProtectionCard()">USE CARD</button><button onclick="closeModal()">NOT NOW</button></div>`)
+}
+function confirmProtectionCard(){closeModal();state.protectionCards--;state.protectedDays[today()]=true;state.successDays[today()]=true;state.streak=state.lastCheck===ydayKey()?state.streak+1:Math.max(1,state.streak);state.lastCheck=today();state.best=Math.max(state.best,state.streak);state.rankDays=(state.rankDays||0)+1;if(state.rankDays>=3){promoteRank();state.rankDays=0}save();toast('Protection Card used · RECLAIM progress protected')}
+function launchGame(i){
+ const names=gameCatalog[i],title=names[0],desc=names[2],id='g'+i;
+ const reward=10+(i%3)*5;
+ let body='';
+ if(i===0){body=`<button class="game-pad" id="reactionPad" onclick="reactionTap()">TAP TO START</button><p id="reactionResult">Wait for green.</p>`;window.reactionMode='ready'}
+ else if(i===1){startMemory();return}
+ else if(i===2){startBreathing();return}
+ else if(i===3){startFocus();return}
+ else if(i===4){startSequence();return}
+ else if(i===5){startWordMix();return}
+ else if(i===6){startTapSprint();return}
+ else if(i===7){let a=Math.floor(Math.random()*20)+5,b=Math.floor(Math.random()*20)+1,op=Math.random()>.5?'+':'-';window.mathAnswer=op==='+'?a+b:a-b;body=`<div class="game-big">${a} ${op} ${b} = ?</div><input class="game-input" id="genericAnswer" inputmode="numeric" placeholder="Answer"><button class="primary" onclick="checkGeneric(${i},window.mathAnswer)">CHECK</button>`}
+ else if(i===8){let colors=['RED','BLUE','GREEN','YELLOW'];let shown=colors[Math.floor(Math.random()*4)],ink=colors.filter(c=>c!==shown)[Math.floor(Math.random()*3)];window.colorAnswer=ink;body=`<p>Tap the ink color (not the word itself).</p><div class="game-big" style="color:${ink.toLowerCase()}">${shown}</div>${colors.map(c=>`<button class="secondary" onclick="checkChoice(${i},'${c}',window.colorAnswer)">${c}</button>`).join(' ')}`}
+ else if(i===9){let arr=['🍎','🍎','🍎','🚗'];window.oddAnswer='🚗';body=`<div class="game-big">🍎　🍎　🚗　🍎</div>${['🍎','🚗'].map(c=>`<button class="secondary" onclick="checkChoice(${i},'${c}',window.oddAnswer)">${c}</button>`).join(' ')}`}
+ else if(i===10){let seq=['◆','●','▲','◆','●'];window.patternAnswer='▲';body=`<div class="game-big">${seq.join(' ')}</div><p>What comes next?</p>${['◆','●','▲'].map(c=>`<button class="secondary" onclick="checkChoice(${i},'${c}',window.patternAnswer)">${c}</button>`).join(' ')}`}
+ else if(i===11){window.recallWord=['ORBIT','MELLOW','BRAVE','SPARK'][Math.floor(Math.random()*4)];body=`<div class="game-big" id="recallWord">${window.recallWord}</div><button class="secondary" onclick="document.getElementById('recallWord').textContent='•••••';document.getElementById('recallInput').style.display='block'">HIDE WORD</button><input id="recallInput" class="game-input" style="display:none;margin-top:12px" placeholder="Type the word"><button class="primary" onclick="checkGeneric(${i},window.recallWord)">CHECK</button>`;setTimeout(()=>{let e=document.getElementById('recallWord');if(e)e.textContent='•••••';let inp=document.getElementById('recallInput');if(inp)inp.style.display='block'},3500)}
+ else if(i===12){window.tfAnswer='true';body=`<div class="game-big">A triangle has 3 sides.</div><button class="secondary" onclick="checkChoice(${i},'true',window.tfAnswer)">TRUE</button><button class="secondary" onclick="checkChoice(${i},'false',window.tfAnswer)">FALSE</button>`}
+ else if(i===13){window.guessAnswer=Math.floor(Math.random()*10)+1;body=`<p>Pick a number between 1 and 10.</p><div class="game-actions">${Array.from({length:10},(_,j)=>`<button onclick="checkChoice(${i},'${j+1}',String(window.guessAnswer))">${j+1}</button>`).join('')}</div><p id="gameResult"></p>`}
+ else if(i===14){window.directionAnswer=['↑','↓','←','→'][Math.floor(Math.random()*4)];body=`<div class="game-big">${window.directionAnswer}</div><p>Tap the matching arrow.</p>${['↑','↓','←','→'].map(c=>`<button class="secondary" onclick="checkChoice(${i},'${c}',window.directionAnswer)">${c}</button>`).join(' ')}`}
+ else if(i===15){let count=Math.floor(Math.random()*5)+3;window.shapeAnswer=String(count);body=`<div class="game-big">${'● '.repeat(count)}</div><p>How many circles?</p><input id="genericAnswer" class="game-input" inputmode="numeric" placeholder="Count"><button class="primary" onclick="checkGeneric(${i},window.shapeAnswer)">CHECK</button>`}
+ else if(i===16){window.typePhrase='TAKE BACK YOUR TIME';body=`<div class="game-big">${window.typePhrase}</div><input class="game-input" id="genericAnswer" placeholder="Type the phrase"><button class="primary" onclick="checkGeneric(${i},window.typePhrase)">CHECK</button>`}
+ else if(i===17){window.sudokuAnswer='123';body=`<p>Complete the missing row using 1, 2, 3 once each.</p><div class="game-big">1　_　3</div><input id="genericAnswer" class="game-input" placeholder="Missing number"><button class="primary" onclick="checkGeneric(${i},'2')">CHECK</button>`}
+ else if(i===18){window.sequenceAnswer='16';body=`<div class="game-big">2, 4, 8, ?</div><input id="genericAnswer" class="game-input" inputmode="numeric" placeholder="Next number"><button class="primary" onclick="checkGeneric(${i},'16')">CHECK</button>`}
+ else if(i===19){window.findAnswer='★';body=`<div class="game-big">○　○　★　○　○</div><p>Find the star.</p><button class="secondary" onclick="checkChoice(${i},'★',window.findAnswer)">★</button><button class="secondary" onclick="checkChoice(${i},'○',window.findAnswer)">○</button>`}
+ else if(i===20){window.triviaAnswer='Pacific';body=`<p>Which ocean is the largest?</p>${['Atlantic','Pacific','Indian'].map(c=>`<button class="secondary" onclick="checkChoice(${i},'${c}',window.triviaAnswer)">${c}</button>`).join(' ')}`}
+ else if(i===21){body=`<p>Tap the center button 10 times to keep your focus steady.</p><button class="game-pad" id="balanceTap" onclick="balanceCount()">0 / 10</button>`;window.balanceN=0;window.balanceId=i}
+ else {body=`<div class="game-big">☁️</div><p>Pause for 10 seconds. Let your shoulders relax and notice your surroundings.</p><button class="primary" onclick="gameReward('${id}',${reward});toast('Mindful pause complete')">I TOOK A PAUSE</button>`}
+ game(`<div class="game-area"><div class="eyebrow">GAME ${String(i+1).padStart(2,'0')} / 23</div><h2>${title}</h2><p>${desc}</p>${body}<p class="small muted" style="margin-top:15px">Reward: ${reward} XP once daily · no rank/streak progress</p></div>`);
+ window.currentGame={id,reward,i};
+}
+
+function nextGameRound(i,message='Next round loading…'){
+ const box=document.getElementById('gameContainer');
+ if(box)box.insertAdjacentHTML('beforeend',`<p class="small muted" style="text-align:center;margin-top:12px">${message}</p>`);
+ setTimeout(()=>launchGame(i),900);
+}
+
+function checkGeneric(i,answer){let val=(document.getElementById('genericAnswer')?.value||'').trim().toUpperCase(),correct=String(answer).trim().toUpperCase();if(val===correct){gameReward('g'+i,window.currentGame?.reward||15);nextGameRound(i,'Correct! Loading the next puzzle…')}else toast('Not quite — no penalty, try again')}
+function checkChoice(i,choice,answer){if(String(choice)===String(answer)){gameReward('g'+i,window.currentGame?.reward||15);nextGameRound(i,'Correct! Loading the next puzzle…')}else toast('Not quite — try again')}
+function balanceCount(){window.balanceN++;let el=document.getElementById('balanceTap');if(el)el.textContent=window.balanceN+' / 10';if(window.balanceN>=10){el.disabled=true;gameReward('g21',15);toast('Challenge complete');nextGameRound(21,'Round complete! Starting another…')}}
+
+
+function startRandom(){launchGame(Math.floor(Math.random()*23))}
+function reactionTap(){
+ let pad=document.getElementById('reactionPad'),result=document.getElementById('reactionResult');if(!pad)return;
+ if(window.reactionMode==='ready'){window.reactionMode='wait';pad.textContent='WAIT...';pad.disabled=true;let delay=1200+Math.random()*2300;reactionTimer=setTimeout(()=>{window.reactionMode='go';reactionStart=performance.now();pad.disabled=false;pad.classList.add('target');pad.textContent='TAP NOW'},delay)}
+ else if(window.reactionMode==='wait'){clearTimeout(reactionTimer);window.reactionMode='ready';pad.disabled=false;pad.textContent='TOO SOON — TRY AGAIN';result.textContent='No worries. Give it another try.'}
+ else if(window.reactionMode==='go'){let ms=Math.round(performance.now()-reactionStart);window.reactionMode='done';pad.classList.remove('target');pad.textContent=ms+' ms';result.textContent='Nice focus. You completed the challenge.';gameReward('g0',15);nextGameRound(0,'Nice reaction! New round loading…')}
+}
+function flipCard(i){
+ let g=window.memoryGame;if(!g||g.locked||g.matched.includes(i)||g.open.includes(i))return;
+ document.getElementById('card'+i).textContent=g.deck[i];g.open.push(i);
+ if(g.open.length===2){g.locked=true;let [a,b]=g.open;
+  if(g.deck[a]===g.deck[b]){g.matched.push(a,b);g.open=[];g.locked=false;document.getElementById('memoryStatus').textContent=(g.matched.length/2)+' / 6 pairs found';
+   if(g.matched.length===12){document.getElementById('memoryStatus').textContent='All pairs matched. Well done!';gameReward('g1',15);nextGameRound(1,'All pairs found! New memory board loading…')}
+  }else setTimeout(()=>{[a,b].forEach(n=>{let el=document.getElementById('card'+n);if(el)el.textContent='＋'});g.open=[];g.locked=false},700)
+ }
+}
+function finishBreathing(){gameReward('g2',10);document.getElementById('gameContainer').innerHTML='<div class="panel"><b>Good reset.</b><p class="small" style="margin-top:6px">Starting another calm round…</p></div>';nextGameRound(2)}
+function toggleFocus(){
+ let btn=document.getElementById('focusButton');if(!btn)return;
+ if(window.focusRunning){clearInterval(focusTimer);window.focusRunning=false;btn.textContent='RESUME'}
+ else{window.focusRunning=true;btn.textContent='PAUSE';focusTimer=setInterval(()=>{focusSeconds--;let m=String(Math.floor(focusSeconds/60)).padStart(2,'0'),s=String(focusSeconds%60).padStart(2,'0'),clock=document.getElementById('focusClock');if(clock)clock.textContent=m+':'+s;
+ if(focusSeconds<=0){clearInterval(focusTimer);window.focusRunning=false;btn.textContent='COMPLETED';btn.disabled=true;nextGameRound(3,'Focus sprint complete! Resetting for another round…');document.getElementById('focusStatus').textContent='You showed up for yourself.';gameReward('g3',15)}},1000)}
+}
+
+
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);state={...defaultState,...d};ensureState();save();toast('Backup imported')}catch(err){toast('Invalid backup file')}};r.readAsText(f)}
+function resetData(){if(confirm('Delete all RECLAIM progress stored on this device?')){localStorage.removeItem(KEY);state={...defaultState};ensureState();save();toast('Local data reset')}}
+
+
+/* ===== RECLAIM v0.8 stable systems override ===== */
+const XP_DAILY_LIMIT=600;
+function persistOnly(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function ensureState(){
+ state.dailyXP=state.dailyXP||{};state.missionXP=state.missionXP||{};
+ state.rankIndex=Number.isInteger(state.rankIndex)?Math.max(0,Math.min(7,state.rankIndex)):0;
+ state.division=Number.isInteger(state.division)?Math.max(0,Math.min(3,state.division)):0;
+ state.rankDays=Number(state.rankDays)||0;state.successDays=state.successDays||{};
+ state.protectionCards=Number(state.protectionCards)||0;state.protectedDays=state.protectedDays||{};
+ state.personalStreak=Number(state.personalStreak)||0;state.personalBest=Number(state.personalBest)||0;
+ state.personalCheckins=state.personalCheckins||{};state.personalMilestones=Number(state.personalMilestones)||0;
+ state.recoveryUsed=state.recoveryUsed||{};state.done=state.done||{};state.days=state.days||{};
+ state.totalDone=Number(state.totalDone)||0;state.xp=Number(state.xp)||0;state.streak=Number(state.streak)||0;state.best=Number(state.best)||0;
+}
+function addXP(n){
+ const d=today();ensureState();
+ const used=Number(state.dailyXP[d])||0,allowed=Math.max(0,XP_DAILY_LIMIT-used);
+ const award=Math.min(Math.max(0,Number(n)||0),allowed);
+ if(award>0){state.xp+=award;state.dailyXP[d]=used+award;toast(`+${award} XP earned`)}
+ else toast('Daily XP cap reached · play for fun');
+ save();return award;
+}
+function rankLabel(){return `${rankNames[state.rankIndex]||'EMBER'} ${['IV','III','II','I'][state.division]||'IV'}`}
+function promoteRank(){
+ if(state.division<3){state.division++;toast(`Rank division promoted · ${rankLabel()}`);return true}
+ const next=state.rankIndex+1;
+ if(next>7){toast('Highest rank reached · keep building consistency');return false}
+ if(levelInfo().level<rankLevels[next]){state.rankDays=3;toast(`Level ${rankLevels[next]} required for ${rankNames[next]}`);return false}
+ state.rankIndex=next;state.division=0;state.rankDays=0;toast(`New rank unlocked · ${rankLabel()}`);return true
+}
+function rankStepDown(){
+ if(state.division>0)state.division--;
+ else if(state.rankIndex>0){state.rankIndex--;state.division=3}
+ state.rankDays=0;
+}
+function updateDailyProgress(){
+ const d=today(),count=(state.done[d]||[]).length;
+ if(state.protectedDays[d]){state.successDays[d]=true;return}
+ if(count>=3&&!state.successDays[d]){
+  state.successDays[d]=true;
+  if(state.recoveryDate===d){state.recoveryDate=null;state.recoveryPenaltyApplied=false;toast('Recovery complete · rank protected')}
+  state.rankDays=(state.rankDays||0)+1;
+  state.streak=state.lastCheck===ydayKey()?state.streak+1:1;
+  state.lastCheck=d;state.best=Math.max(state.best,state.streak);
+  if(state.rankDays>=3){promoteRank();if(state.rankDays>=3 && state.rankIndex<7 && levelInfo().level>=rankLevels[state.rankIndex+1])state.rankDays=0}
+ }
+}
+function complete(id){
+ ensureState();checkRecoveryState();
+ const d=today(),done=state.done[d]||[],mission=missions.find(m=>m.id===id);
+ if(state.protectedDays[d]){toast('Today is protected by your card · no missions needed');return}
+ if(!mission)return;
+ if(done.includes(id)){
+  state.done[d]=done.filter(x=>x!==id);
+  const actual=Number(state.missionXP[d]?.[id])||0;
+  state.xp=Math.max(0,state.xp-actual);
+  state.dailyXP[d]=Math.max(0,(Number(state.dailyXP[d])||0)-actual);
+  if(state.missionXP[d])delete state.missionXP[d][id];
+  state.totalDone=Math.max(0,state.totalDone-1);
+  if(!state.done[d].length)delete state.days[d];
+  if((state.done[d]||[]).length<3 && state.successDays[d] && !state.protectedDays[d]){
+    delete state.successDays[d];state.rankDays=Math.max(0,(state.rankDays||0)-1);
+    if(state.lastCheck===d){state.streak=Math.max(0,state.streak-1);state.lastCheck=state.streak?ydayKey():null}
+  }
+  toast('Mission unchecked · XP returned');
+ }else{
+  state.done[d]=[...done,id];state.days[d]=true;state.totalDone++;
+  const awarded=addXP(mission.xp);
+  state.missionXP[d]=state.missionXP[d]||{};state.missionXP[d][id]=awarded;
+  updateDailyProgress();
+ }
+ save();
+}
+function checkRecoveryState(){
+ const d=today(),y=ydayKey();
+ if(state.recoveryDate && state.recoveryDate!==d){
+  if(!state.successDays[state.recoveryDate]&&!state.protectedDays[state.recoveryDate]&&!state.recoveryPenaltyApplied){
+   rankStepDown();state.recoveryPenaltyApplied=true;state.streak=0;state.lastCheck=null;
+   toast('Recovery missed · rank adjusted one step');
+  }
+  state.recoveryDate=null;state.recoveryPenaltyApplied=false;
+  persistOnly();
+ }
+ if(state.lastCheck && state.lastCheck!==y && state.lastCheck!==d && !state.protectedDays[y] && !state.successDays[y]){
+  state.recoveryDate=d;state.recoveryPenaltyApplied=false;persistOnly();
+ }
+}
+function renderRankCards(){
+ const host=document.getElementById('rankCards');if(!host)return;
+ const current=state.rankIndex||0;
+ host.innerHTML=rankNames.map((name,i)=>{
+  const req=xpForLevel(rankLevels[i]),unlocked=levelInfo().level>=rankLevels[i];
+  return `<button class="rank-card ${i===current?'current':''} ${unlocked?'':'locked'}" onclick="selectRank(${i})"><span class="rank-num">RANK ${String(i+1).padStart(2,'0')} · ${unlocked?'UNLOCKED':'LOCKED'}</span><span class="rank-gem">${i===current?'✦':'◇'}</span><h3>${name}</h3><div class="rank-min">Minimum Level ${rankLevels[i]}</div><div class="rank-min">Unlock: ${req.toLocaleString()} total XP</div><div class="rank-min">Divisions IV → III → II → I</div></button>`
+ }).join('');
+ selectRank(Math.min(selectedRank,7));
+}
+function selectRank(i){
+ selectedRank=Math.max(0,Math.min(7,Number(i)||0));
+ const detail=document.getElementById('rankDetail');if(!detail)return;
+ const total=Number(state.xp)||0,req=xpForLevel(rankLevels[selectedRank]);
+ const start=selectedRank===0?0:req;
+ const end=selectedRank<7?xpForLevel(rankLevels[selectedRank+1]):start+5000;
+ const pct=Math.max(0,Math.min(100,(total-start)/Math.max(1,end-start)*100));
+ const isCurrent=selectedRank===state.rankIndex;
+ detail.innerHTML=`<div class="eyebrow">${isCurrent?'YOUR CURRENT RANK':'RANK PREVIEW'}</div><h2 style="margin:5px 0">${rankNames[selectedRank]} ${isCurrent?['IV','III','II','I'][state.division]:''}</h2><p class="small muted">Minimum Level ${rankLevels[selectedRank]} · ${req.toLocaleString()} total XP to unlock</p><div class="rank-progress"><div class="rank-progress-fill" style="width:${pct}%"></div><div class="rank-progress-marker" style="left:${pct}%"></div></div><div class="rank-xp-meta"><span>${start.toLocaleString()} XP</span><span style="color:#f4d47b">${total.toLocaleString()} XP</span><span>${end.toLocaleString()} XP</span></div><p class="small" style="margin-top:10px">${total<req?`${(req-total).toLocaleString()} XP remaining to unlock this rank.`:'XP unlocks levels; rank divisions are earned through consistency.'}</p>`;
+}
+function render(){
+ ensureState();
+ const li=levelInfo();
+ if((state.rankDays||0)>=3 && state.division===3 && state.rankIndex<7 && li.level>=rankLevels[state.rankIndex+1]){
+   promoteRank();if(state.rankIndex<7)state.rankDays=0;persistOnly();
+ }
+ const el=id=>document.getElementById(id);
+ if(el('streak'))el('streak').textContent=state.streak||0;
+ if(el('level'))el('level').textContent=String(li.level).padStart(2,'0');
+ if(el('levelName'))el('levelName').textContent=li.name;
+ if(el('xpFill'))el('xpFill').style.width=Math.min(100,li.within/li.span*100)+'%';
+ if(el('xpText'))el('xpText').textContent=`${li.within} / ${li.span} XP`;
+ if(el('nextLevel'))el('nextLevel').textContent=`${li.span-li.within} XP to next level`;
+ if(el('totalXP'))el('totalXP').textContent=state.xp;
+ if(el('doneCount'))el('doneCount').textContent=state.totalDone;
+ if(el('homeRank'))el('homeRank').textContent=rankLabel();
+ if(el('progressStreak'))el('progressStreak').textContent=state.streak||0;
+ if(el('bestStreak'))el('bestStreak').textContent=state.best||0;
+ checkRecoveryState();
+ const d=today(),done=state.done[d]||[],protectedToday=!!state.protectedDays[d],isRecovery=state.recoveryDate===d;
+ const recoveryTasks=[['Complete a manageable focus block','Recovery mission · steady and manageable'],['Reset one small space','Recovery mission · create a calmer environment'],['Review tomorrow’s plan','Recovery mission · set up a fresh start']];
+ if(el('missions'))el('missions').innerHTML=protectedToday?`<div class="panel"><div class="eyebrow">🛡️ PROTECTED DAY</div><h3>Today’s missions are covered.</h3><p class="small">Protection Card used. No XP awarded, and personal habit check-in remains manual.</p></div>`:missions.map((m,i)=>{let title=isRecovery?recoveryTasks[i%3][0]:m.title,sub=isRecovery?recoveryTasks[i%3][1]:m.sub;return `<div class="mission ${done.includes(m.id)?'done':''}"><button class="check" aria-label="Complete ${title}" onclick="complete('${m.id}')">${done.includes(m.id)?'✓':''}</button><div class="mission-copy"><div class="mission-title">${title}</div><div class="mission-sub">${sub}</div></div><span class="xp">+${m.xp} XP</span></div>`}).join('');
+ const stages=[['Seedling','🌱','Your journey starts with one small step.'],['Sprout','🌿','Your habits are beginning to take root.'],['Growing','🌳','Small actions are building momentum.'],['Flourishing','🌲','Your consistency is shaping your world.'],['Sanctuary','🏡','A world built through steady progress.']];
+ const stage=Math.min(4,Math.floor(state.xp/500)),w=state.xp%500/5,st=stages[stage];
+ if(el('worldStage'))el('worldStage').textContent=st[0];if(el('worldIcon'))el('worldIcon').textContent=st[1];if(el('worldScene'))el('worldScene').textContent=st[1];if(el('worldDesc'))el('worldDesc').textContent=st[2];if(el('worldEnergy'))el('worldEnergy').textContent=w+'%';if(el('worldFill'))el('worldFill').style.width=w+'%';
+ if(el('calendar'))renderCalendar();if(el('badges'))renderBadges();
+ if(el('gamesGrid'))renderGames();
+ if(el('personalStreak')){el('personalStreak').textContent=state.personalStreak||0;el('personalCheckStatus').textContent=state.personalCheckins[d]?'Checked in today':'No check-in today';el('cardCount').textContent=state.protectionCards||0}
+ if(el('rankName'))el('rankName').textContent=rankLabel();
+ if(el('rankProgress'))el('rankProgress').textContent=`${state.rankDays||0} / 3 successful days to next division · Level ${li.level}`;
+ if(el('rankCards'))renderRankCards();
+}
+function gameReward(id,points=15){
+ const key='game_'+id+'_'+today();
+ if(state[key]){toast('Daily reward already claimed · keep playing for fun');return 0}
+ state[key]=true;return addXP(points);
+}
+function reactionTap(){
+ const pad=document.getElementById('reactionPad'),result=document.getElementById('reactionResult');if(!pad)return;
+ if(window.reactionMode==='ready'){window.reactionMode='wait';pad.textContent='WAIT…';pad.disabled=true;reactionTimer=setTimeout(()=>{window.reactionMode='go';reactionStart=performance.now();pad.disabled=false;pad.classList.add('target');pad.textContent='TAP NOW'},1200+Math.random()*2300)}
+ else if(window.reactionMode==='wait'){clearTimeout(reactionTimer);window.reactionMode='ready';pad.disabled=false;pad.textContent='TOO SOON — TRY AGAIN';if(result)result.textContent='No worries. Give it another try.'}
+ else if(window.reactionMode==='go'){const ms=Math.round(performance.now()-reactionStart);window.reactionMode='done';pad.classList.remove('target');pad.textContent=ms+' ms';if(result)result.textContent='Nice reaction! Loading a fresh round…';gameReward('g0',15);nextGameRound(0)}
+}
+function flipCard(i){
+ const g=window.memoryGame;if(!g||g.locked||g.matched.includes(i)||g.open.includes(i))return;
+ const card=document.getElementById('card'+i);if(!card)return;card.textContent=g.deck[i];g.open.push(i);
+ if(g.open.length===2){g.locked=true;const [a,b]=g.open;
+  if(g.deck[a]===g.deck[b]){g.matched.push(a,b);g.open=[];g.locked=false;const status=document.getElementById('memoryStatus');if(status)status.textContent=`${g.matched.length/2} / 6 pairs found`;
+   if(g.matched.length===12){if(status)status.textContent='All pairs matched! Loading a new board…';gameReward('g1',15);nextGameRound(1)}
+  }else setTimeout(()=>{[a,b].forEach(n=>{const c=document.getElementById('card'+n);if(c)c.textContent='＋'});g.open=[];g.locked=false},700)
+ }
+}
+function finishBreathing(){gameReward('g2',10);nextGameRound(2,'Reset complete · a fresh round is ready')}
+function toggleFocus(){
+ const btn=document.getElementById('focusButton');if(!btn)return;
+ if(window.focusRunning){clearInterval(focusTimer);window.focusRunning=false;btn.textContent='RESUME'}
+ else{window.focusRunning=true;btn.textContent='PAUSE';focusTimer=setInterval(()=>{focusSeconds--;const m=String(Math.floor(focusSeconds/60)).padStart(2,'0'),sec=String(focusSeconds%60).padStart(2,'0'),clock=document.getElementById('focusClock');if(clock)clock.textContent=m+':'+sec;
+ if(focusSeconds<=0){clearInterval(focusTimer);window.focusRunning=false;btn.textContent='COMPLETED';btn.disabled=true;const status=document.getElementById('focusStatus');if(status)status.textContent='You showed up for yourself.';gameReward('g3',15);nextGameRound(3,'Focus sprint complete · loading a fresh round…')}},1000)}
+}
+function finishBreathing(){gameReward('g2',10);nextGameRound(2,'Reset complete · a fresh round is ready')}
+function checkGeneric(i,answer){
+ const input=document.getElementById('genericAnswer');if(!input)return;
+ const val=input.value.trim().toUpperCase(),correct=String(answer).trim().toUpperCase();
+ if(val===correct){gameReward('g'+i,window.currentGame?.reward||15);nextGameRound(i,'Correct! Loading the next puzzle…')}
+ else toast('Not quite — no penalty, try again');
+}
+function checkChoice(i,choice,answer){
+ if(String(choice)===String(answer)){gameReward('g'+i,window.currentGame?.reward||15);nextGameRound(i,'Correct! Loading the next puzzle…')}
+ else toast('Not quite — try again');
+}
+function balanceCount(){window.balanceN++;const el=document.getElementById('balanceTap');if(el)el.textContent=window.balanceN+' / 10';if(window.balanceN>=10){if(el)el.disabled=true;gameReward('g21',15);nextGameRound(21,'Challenge complete · fresh round loading…')}}
+function habitYesConfirm(){
+ closeModal();const d=today();if(state.personalCheckins[d])return;
+ state.personalCheckins[d]='yes';
+ state.personalStreak=state.personalCheckins[ydayKey()]==='yes'?(state.personalStreak||0)+1:1;
+ state.personalBest=Math.max(state.personalBest,state.personalStreak);
+ const milestone=Math.floor(state.personalStreak/7);
+ if(milestone>(state.personalMilestones||0)){state.personalMilestones=milestone;if(state.protectionCards<3){state.protectionCards++;toast('7-day milestone · Protection Card earned! 🛡️')}else toast('7-day milestone · inventory full (max 3)')}
+ save();modal(`<div class="eyebrow">CASE CLOSED</div><div class="detective">🔎</div><h2 style="text-align:center">Check-in recorded.</h2><p style="text-align:center;margin:10px 0">Your personal streak is now ${state.personalStreak} days. Keep going at your own pace.</p><button class="primary" style="width:100%" onclick="closeModal()">CONTINUE</button>`)
+}
+function habitNo(){
+ closeModal();const d=today();if(state.personalCheckins[d])return;
+ state.personalCheckins[d]='no';state.personalStreak=0;state.personalMilestones=0;save();
+ modal(`<div class="eyebrow">CASE STATUS</div><div class="detective no-case">🗃️</div><div class="case-stamp" style="margin:15px 0">CASE PAUSED</div><h2>A rough day isn’t your whole story.</h2><p style="margin:10px 0 16px">You checked in honestly. Take a breath, be kind to yourself, and begin again when you’re ready.</p><button class="primary" style="width:100%" onclick="closeModal()">CLOSE CASE</button>`)
+}
+function confirmProtectionCard(){
+ closeModal();if(!state.protectionCards||state.protectedDays[today()])return;
+ state.protectionCards--;state.protectedDays[today()]=true;state.successDays[today()]=true;
+ state.streak=state.lastCheck===ydayKey()?state.streak+1:Math.max(1,state.streak);state.lastCheck=today();state.best=Math.max(state.best,state.streak);
+ state.rankDays=(state.rankDays||0)+1;if(state.rankDays>=3){promoteRank();if(state.rankDays>=3&&state.rankIndex<7&&levelInfo().level>=rankLevels[state.rankIndex+1])state.rankDays=0}
+ save();toast('Protection Card used · RECLAIM day protected')
+}
+
+render();
+</script>
+<script>if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));}</script>
+</body>
+</html>
