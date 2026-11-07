@@ -1,4 +1,3 @@
-
 name: Build RECLAIM Android APK
 
 on:
@@ -15,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -29,32 +28,53 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Install dependencies
+      - name: Install project dependencies
         run: npm install
 
-      - name: Prepare web assets
+      - name: Prepare RECLAIM web files and logo
         run: |
-          mkdir -p www/assets
-          cp index.html www/
-          cp manifest.webmanifest www/
-          cp service-worker.js www/
-          cp -R assets/. www/assets/
+          test -f index.html
+          test -f reclaim.png
+          mkdir -p www/assets assets
 
-          node -e "const fs=require('fs');const p='capacitor.config.json';const c=JSON.parse(fs.readFileSync(p,'utf8'));c.webDir='www';fs.writeFileSync(p,JSON.stringify(c,null,2));"
+          cp index.html www/index.html
+          cp manifest.webmanifest www/manifest.webmanifest
+          cp service-worker.js www/service-worker.js
+
+          # Use the exact logo uploaded by Saad at repository root.
+          cp reclaim.png www/assets/reclaim-192.png
+          cp reclaim.png www/assets/reclaim-512.png
+          cp reclaim.png assets/icon.png
+
+          # Keep app identity and point Capacitor at the prepared web folder.
+          node - <<'NODE'
+          const fs = require('fs');
+          const p = 'capacitor.config.json';
+          const c = JSON.parse(fs.readFileSync(p, 'utf8'));
+          c.appId = 'com.reclaim.app';
+          c.appName = 'RECLAIM';
+          c.webDir = 'www';
+          fs.writeFileSync(p, JSON.stringify(c, null, 2));
+          NODE
 
       - name: Add Android platform
         run: npx cap add android
 
+      - name: Generate Android app icons from RECLAIM logo
+        run: |
+          npm install --no-save @capacitor/assets
+          npx capacitor-assets generate --android
+
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Build APK
+      - name: Build debug APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: RECLAIM-debug-APK
