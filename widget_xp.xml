@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/widget_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="14dp" android:background="#111111">
+<TextView android:id="@+id/widget_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RECLAIM / XP" android:textColor="#E53935" android:textSize="11sp" android:textStyle="bold" />
+<TextView android:id="@+id/widget_main" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="Loading" android:textColor="#FFFFFF" android:textSize="22sp" android:textStyle="bold" />
+<TextView android:id="@+id/widget_sub" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Take Back Your Time" android:textColor="#AAAAAA" android:textSize="12sp" />
+<ProgressBar android:id="@+id/widget_progress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="6dp" android:layout_marginTop="10dp" android:progressTint="#E53935" android:progressBackgroundTint="#333333" android:max="100" android:progress="0" /></LinearLayout>
