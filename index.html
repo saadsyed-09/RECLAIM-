@@ -282,7 +282,8 @@ const missions=[
  {id:'read',title:'Read for 10 minutes',sub:'A few pages still count',xp:50}
 ];
 function load(){try{return {...defaultState,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return {...defaultState}}}
-function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+function syncWidgetData(){try{const li=levelInfo(),day=today(),done=(state.done[day]||[]).length,total=missions.length;const payload={xp:Number(state.xp)||0,level:Number(li.level)||1,levelName:String(li.name||'LEVEL'),levelProgress:Math.max(0,Math.min(100,Math.round(((Number(state.xp)||0)-xpForLevel(Number(li.level)||1))/Math.max(1,xpForLevel((Number(li.level)||1)+1)-xpForLevel(Number(li.level)||1))*100))),streak:Number(state.streak)||0,doneCount:done,totalMissions:total};if(window.ReclaimWidgetBridge&&window.ReclaimWidgetBridge.updateWidgetData)window.ReclaimWidgetBridge.updateWidgetData(JSON.stringify(payload));}catch(e){}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));render();syncWidgetData()}
 function today(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function yesterday(){let d=new Date();d.setDate(d.getDate()-1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function addXP(n){state.xp+=n;toast('+'+n+' XP earned');save()}
@@ -351,6 +352,7 @@ function render(){
 function renderCalendar(){let d=new Date(),year=d.getFullYear(),month=d.getMonth(),first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate();document.getElementById('monthLabel').textContent=d.toLocaleString('en',{month:'long',year:'numeric'});let out='';for(let i=0;i<first;i++)out+='<div></div>';for(let n=1;n<=days;n++){let key=`${year}-${String(month+1).padStart(2,'0')}-${String(n).padStart(2,'0')}`;out+=`<div class="day ${state.days[key]?'done':''} ${key===today()?'today':''}">${n}</div>`}document.getElementById('calendar').innerHTML=out}
 function renderBadges(){let items=[['🌱','First step',state.totalDone>=1],['⚡','100 XP',state.xp>=100],['🏅','500 XP',state.xp>=500],['🔥','7-day streak',state.best>=7],['🌟','25 missions',state.totalDone>=25],['🏡','World builder',state.xp>=2000]];document.getElementById('badges').innerHTML=items.map(x=>`<div class="badge-item" style="opacity:${x[2]?1:.35}"><div class="medal">${x[0]}</div><small>${x[1]}</small></div>`).join('')}
 function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='profile')document.getElementById('displayName').value=state.name||'';if(id==='progress')renderRankCards()}
+window.reclaimOpenWidgetPage=function(page){if(['home','quest','world','progress','profile'].includes(page))showPage(page);};
 let toastTimer;function toast(msg){let el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1800)}
 function game(html){document.getElementById('gameContainer').innerHTML=`<div class="panel">${html}</div>`;document.getElementById('gameContainer').scrollIntoView({behavior:'smooth',block:'start'})}
 function startRandom(){let a=[startReaction,startMemory,startBreathing,startFocus];a[Math.floor(Math.random()*a.length)]()}
@@ -818,5 +820,6 @@ function confirmProtectionCard(){
 render();
 </script>
 <script>if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));}</script>
+<script>setTimeout(()=>{syncWidgetData();try{const page=window.ReclaimWidgetBridge?.getLaunchPage?.();if(page&&window.reclaimOpenWidgetPage)window.reclaimOpenWidgetPage(page)}catch(e){}},900);</script>
 </body>
 </html>
